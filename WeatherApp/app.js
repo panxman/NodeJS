@@ -4,19 +4,19 @@ const forecast = require("./utils/forecast");
 const location = process.argv[2];
 
 if (location) {
-  geocode(location, (error, data) => {
+  geocode(location, (error, { latitude, longitude, location }) => {
     if (error) {
       return console.log(error);
-    }
+    }    
 
-    forecast(data.latitude, data.longitude, (error, forecastData) => {
+    forecast(latitude, longitude, (error, { description, temperature, feelslike }) => {
       if (error) {
         return console.log(error);
       }
-
-      console.log(`It's ${forecastData.description} in ${data.location}.`);
-      console.log(`The temperature is ${forecastData.temperature}°C.`);
-      console.log(`It feels like ${forecastData.feelslike}°C.`);
+  
+      console.log(`It's ${description} in ${location}.`);
+      console.log(`The temperature is ${temperature}°C.`);
+      console.log(`It feels like ${feelslike}°C.`);
     });
   });
 } else {
