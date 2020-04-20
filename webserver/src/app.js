@@ -1,15 +1,18 @@
 const path = require("path");
 const express = require("express");
+const hbs = require("hbs");
 
 const app = express();
 
 // Define paths for Express config
 const publicDir = path.join(__dirname, "../public");
-const viewsPath = path.join(__dirname, "../templates");
+const viewsPath = path.join(__dirname, "../templates/views");
+const partialsPath = path.join(__dirname, "../templates/partials");
 
-// Setup handlebars engine and views location
+// Setup handlebars engine, views location and handlebars partials
 app.set("view engine", "hbs");
-app.set("views", viewsPath);
+app.set("views", viewsPath); // TIP: The default folder should be named: views
+hbs.registerPartials(partialsPath);
 
 // Setup static directory to server
 app.use(express.static(publicDir));
@@ -36,6 +39,7 @@ app.get("/help", (req, res) => {
   res.render("help", {
     title: "Help Page",
     helpMsg: "This is a page to provide a help message. Hjelp Hjelp.",
+    name: "Panos",
   });
 });
 
