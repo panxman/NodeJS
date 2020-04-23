@@ -1,6 +1,8 @@
 const path = require("path");
 const express = require("express");
 const hbs = require("hbs");
+const geocode = require("./utils/geocode");
+const forecast = require("./utils/forecast");
 
 const app = express();
 
@@ -45,10 +47,34 @@ app.get("/help", (req, res) => {
 
 // app.com/weather
 app.get("/weather", (req, res) => {
-  res.send({
-    forecast: "Overcast",
-    location: "Melbourne",
+  if (!req.query.address) {
+    return res.send({
+      error: "No address was provided.",
+    });
+  }
+
+  // Get lat and lon from the Address
+  geocode(req.query.address, (error, { latitude, longitude, location }) => {
+    if (error) {
+      return res.send({ error });
+    }
+
+    // Use lat and lon for the weather forecast
+    forecast(latitude, longitude, (error, { description, temperature, feelslike }) => {
+        if (error) {
+          return res.send({ error });
+        }
+
+        res.send({
+          location,
+          description,
+          temperature,
+          feelslike,
+        });
+      }
+    );
   });
+
 });
 
 // 404 app.com/help/*
