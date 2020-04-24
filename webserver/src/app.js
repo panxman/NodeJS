@@ -54,13 +54,13 @@ app.get("/weather", (req, res) => {
   }
 
   // Get lat and lon from the Address
-  geocode(req.query.address, (error, { latitude, longitude, location }) => {
+  geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
     if (error) {
       return res.send({ error });
     }
 
     // Use lat and lon for the weather forecast
-    forecast(latitude, longitude, (error, { description, temperature, feelslike }) => {
+    forecast(latitude, longitude, (error, { description, temperature, feelslike } = {}) => {
         if (error) {
           return res.send({ error });
         }
