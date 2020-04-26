@@ -20,6 +20,7 @@ const forecast = (latitude, longitude, callback) => {
                 location: body.location.name,
                 temperature: body.current.temperature,
                 feelslike: body.current.feelslike,
+                humidity: body.current.humidity,
             });
         }
     });

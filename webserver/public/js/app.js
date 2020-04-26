@@ -21,6 +21,7 @@ weatherForm.addEventListener("submit", (e) => {
         } else {
           messageOne.textContent = `It's ${data.description} in ${data.location}.`;
           messageTwo.textContent = `The temperature is ${data.temperature}°C and it feels like ${data.feelslike}°C.`;
+          messageTwo.textContent += ` The humidity is at ${data.humidity}%.`;
         }
       });
     }
