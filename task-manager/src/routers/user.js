@@ -55,10 +55,18 @@ router.patch("/users/:id", async (req, res) => {
   }
 
   try {
-    const user = await User.findByIdAndUpdate(_id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    // const user = await User.findByIdAndUpdate(_id, req.body, {
+    //   new: true,
+    //   runValidators: true,
+    // });
+
+    // Use the normal update instead of findByIdAndUpdate,
+    // so Mongoose Middleware pre-save can be run and we can hash the pass
+    const user = await User.findById(_id);
+    
+    updates.forEach(update => user[update] = req.body[update]);
+
+    await user.save();
 
     if (!user) {
       return res.status(404).send("User not found to update.");
