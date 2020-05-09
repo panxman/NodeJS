@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -40,7 +41,25 @@ const userSchema = new mongoose.Schema({
       }
     },
   },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
+
+// Generate a token with JSONWebToken
+userSchema.methods.generateAuthToken = async function () {
+  const token = jwt.sign({ id: this._id.toString() }, "thisismysecretcode");
+
+  this.tokens = this.tokens.concat({ token });
+  await this.save();
+
+  return token;
+};
 
 // Check User's credentials
 userSchema.statics.findByCredentials = async (email, password) => {
@@ -57,15 +76,15 @@ userSchema.statics.findByCredentials = async (email, password) => {
   }
 
   return user;
-}
+};
 
 // Has the plaitext password before saving
 userSchema.pre("save", async function (next) {
-    if (this.isModified("password")) {
-        this.password = await bcrypt.hash(this.password, 8);
-    }
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 8);
+  }
 
-    next();
+  next();
 });
 
 const User = mongoose.model("User", userSchema);
