@@ -61,6 +61,16 @@ userSchema.methods.generateAuthToken = async function () {
   return token;
 };
 
+// Override toJSON method from Express to return only public info
+userSchema.methods.toJSON = function () {
+  const userObject = this.toObject();
+
+  delete userObject.password;
+  delete userObject.tokens;
+
+  return userObject;
+}
+
 // Check User's credentials
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
