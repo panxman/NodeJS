@@ -7,7 +7,6 @@ const auth = async (req, res, next) => {
         const token = req.header("Authorization").replace("Bearer ", "");
         // Decode it using JWT library
         const decoded = jwt.verify(token, "thisismysecretcode");
-        console.log(decoded);
         // Find user with the ID from the Token's payload, that also has saved the same Token to the DB.
         // (because it might have expired)
         const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
@@ -18,6 +17,7 @@ const auth = async (req, res, next) => {
 
         // Save the user into the Request, so we can use it later on the Routers.
         req.user = user;
+        req.token = token;
         next();
     } catch (e) {
         res.status(401).send({ error: "Please authenticate." });
