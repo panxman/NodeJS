@@ -60,25 +60,9 @@ router.get("/users/me", auth, async (req, res) => {
   res.send(req.user);
 });
 
-// Get 1 user
-router.get("/users/:id", async (req, res) => {
-  const _id = req.params.id;
-
-  try {
-    const user = await User.findById(_id);
-    if (!user) {
-      return res.status(404).send("User not found.");
-    }
-
-    res.send(user);
-  } catch (e) {
-    res.status(500).send();
-  }
-});
-
 // Update user
-router.patch("/users/:id", async (req, res) => {
-  const _id = req.params.id;
+router.patch("/users/me", auth, async (req, res) => {
+  const _id = req.user._id;
   const allowedUpdates = ["name", "email", "password", "age"];
 
   const updates = Object.keys(req.body);
@@ -96,35 +80,24 @@ router.patch("/users/:id", async (req, res) => {
     // });
 
     // Use the normal update instead of findByIdAndUpdate,
-    // so Mongoose Middleware pre-save can be run and we can hash the pass
-    const user = await User.findById(_id);
-    
-    updates.forEach(update => user[update] = req.body[update]);
+    // so Mongoose Middleware pre-save can be run and we can hash the pass    
+    updates.forEach(update => req.user[update] = req.body[update]);
 
-    await user.save();
+    await req.user.save();    
 
-    if (!user) {
-      return res.status(404).send("User not found to update.");
-    }
-
-    res.send(user);
+    res.send(req.user);
   } catch (e) {
     res.status(400).send(e);
   }
 });
 
 // Delete User
-router.delete("/users/:id", async (req, res) => {
-  const _id = req.params.id;
+router.delete("/users/me", auth, async (req, res) => {
+  const _id = req.user._id;
 
   try {
-    const user = await User.findByIdAndDelete(_id);
-
-    if (!user) {
-      return res.status(404).send("User not found.");
-    }
-
-    res.send(user);
+    await req.user.remove();
+    res.send(req.user);
   } catch (e) {
     res.status(500).send();
   }
