@@ -6,7 +6,7 @@ const auth = async (req, res, next) => {
         // Get Authorization Header, remove the unnecessary part and keep the TOKEN
         const token = req.header("Authorization").replace("Bearer ", "");
         // Decode it using JWT library
-        const decoded = jwt.verify(token, "thisismysecretcode");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         // Find user with the ID from the Token's payload, that also has saved the same Token to the DB.
         // (because it might have expired)
         const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
