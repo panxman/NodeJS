@@ -19,11 +19,11 @@ const taskSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-taskSchema.pre("save", async function (next) {
-  // LOGIC here
-  console.log("Pre-saving task.")
-  next();
-});
+// taskSchema.pre("save", async function (next) {
+//   // LOGIC here
+//   console.log("Pre-saving task.")
+//   next();
+// });
 
 const Task = mongoose.model("Task", taskSchema);
 
